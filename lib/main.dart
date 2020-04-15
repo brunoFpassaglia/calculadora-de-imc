@@ -16,12 +16,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TextEditingController weightController = TextEditingController();
   TextEditingController heightController = TextEditingController();
   String _info = "Informe seus dados";
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _resetField() {
     weightController.text = "";
     heightController.text = "";
     setState(() {
       _info = "Informe seus dados";
+      _formKey = GlobalKey<FormState>();
     });
   }
 
@@ -75,48 +77,62 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Icon(Icons.person_outline, size: 120, color: Colors.amber),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Peso em KG",
-                labelStyle: TextStyle(color: Colors.blue),
-              ),
-              textAlign: TextAlign.center,
-              controller: weightController,
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Altura em CM",
-                labelStyle: TextStyle(color: Colors.blue),
-              ),
-              textAlign: TextAlign.center,
-              controller: heightController,
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 40),
-              height: 100,
-              child: RaisedButton(
-                onPressed: () {
-                  calculate();
-                },
-                child: Text(
-                  "calcular",
-                  style: TextStyle(color: Colors.white, fontSize: 25),
+        child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Icon(Icons.person_outline, size: 120, color: Colors.amber),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Peso em KG",
+                    labelStyle: TextStyle(color: Colors.blue),
+                  ),
+                  textAlign: TextAlign.center,
+                  controller: weightController,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Insira seu peso";
+                    }
+                  },
                 ),
-                color: Colors.amber,
-              ),
-            ),
-            Text(
-              "$_info",
-              style: TextStyle(color: Colors.grey),
-            )
-          ],
-        ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Altura em CM",
+                    labelStyle: TextStyle(color: Colors.blue),
+                  ),
+                  textAlign: TextAlign.center,
+                  controller: heightController,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Insira seu altura";
+                    }
+                  },
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 40),
+                  height: 100,
+                  child: RaisedButton(
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        calculate();
+                      }
+                    },
+                    child: Text(
+                      "calcular",
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                    color: Colors.amber,
+                  ),
+                ),
+                Text(
+                  "$_info",
+                  style: TextStyle(color: Colors.grey),
+                )
+              ],
+            )),
       ),
     );
   }
